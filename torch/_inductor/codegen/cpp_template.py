@@ -118,7 +118,8 @@ class CppTemplate(KernelTemplate):
             "linux",
             "win32",
         ]
-        if enable_kernel_profile:
+        # profiler_mark_wrapper_call will also result in RECORD_FUNCTION annotations, requiring this import
+        if enable_kernel_profile or config.profiler_mark_wrapper_call:
             res.writelines(["#include <ATen/record_function.h>"])
         return res
 
