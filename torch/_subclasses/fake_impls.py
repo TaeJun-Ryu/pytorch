@@ -91,7 +91,6 @@ _device_not_kwarg_ops = ordered_set(
     aten._nested_tensor_from_tensor_list.default,
     aten._nested_tensor_from_tensor_list.out,
     aten.pin_memory.default,
-    aten.is_pinned.default,
     aten.to.device,
     aten.to.prim_Device,
     aten._pin_memory.default,
