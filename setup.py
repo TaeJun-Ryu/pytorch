@@ -592,6 +592,7 @@ class build_ext(setuptools.command.build_ext.build_ext):
         # Report build options. This is run after the build completes so # `CMakeCache.txt` exists and we can get an
         # accurate report on what is used and what is not.
         cmake_cache_vars = defaultdict(lambda: False, cmake.get_cmake_cache_variables())
+        cmake_cache_vars["CUDA_TOOLKIT_ROOT_DIR"] = '/home/tjryu/work/asolab/lib/cuda/cuda-12.4' ## 수정
         if cmake_cache_vars["USE_NUMPY"]:
             report("-- Building with NumPy bindings")
         else:

@@ -19,6 +19,9 @@ cmake_policy(SET CMP0069 NEW)
 # nice when it's possible, and it's possible on our Windows configs.
 cmake_policy(SET CMP0092 NEW)
 
+set(CUDA_TOOLKIT_ROOT_DIR /home/tjryu/work/asolab/lib/cuda/cuda-12.4)
+set(CMAKE_CUDA_COMPILER /home/tjryu/work/asolab/lib/cuda/cuda-12.4/bin/nvcc)
+
 # ---[ Project and semantic versioning.
 project(Torch CXX C)
 
