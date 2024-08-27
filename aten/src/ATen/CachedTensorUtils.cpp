@@ -3,6 +3,9 @@
 
 #include <c10/util/flat_hash_map.h>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace at::caching {
 
 
@@ -17,6 +20,9 @@ std::mutex cached_tensorimpl_mutex;
 
 
 bool is_cached_tensor(const at::Tensor& t) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   if (!cached_tensorimpls_enabled) {
     return false;
   }
@@ -25,22 +31,34 @@ bool is_cached_tensor(const at::Tensor& t) {
 }
 
 void add_cached_tensor(const at::Tensor& t) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   TORCH_INTERNAL_ASSERT(cached_tensorimpls_enabled);
   const std::lock_guard<std::mutex> lock(cached_tensorimpl_mutex);
   cached_tensorimpls.emplace(t.unsafeGetTensorImpl(), weakref_type(t.getIntrusivePtr()));
 }
 
 void remove_cached_tensor(const at::Tensor& t) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   TORCH_INTERNAL_ASSERT(cached_tensorimpls_enabled);
   const std::lock_guard<std::mutex> lock(cached_tensorimpl_mutex);
   cached_tensorimpls.erase(t.unsafeGetTensorImpl());
 }
 
 void set_cached_tensors_enabled(bool enabled) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   cached_tensorimpls_enabled = enabled;
 }
 
 size_t adjusted_use_count(const at::Tensor& t) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+  
   return t.use_count() - (is_cached_tensor(t) ? 1 : 0);
 }
 

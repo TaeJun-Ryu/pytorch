@@ -41,6 +41,11 @@
 #include <c10/macros/Macros.h>
 #include <c10/util/TypeCast.h>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+#include <typeinfo>
+#include <cxxabi.h>
+
 #ifdef __NVCC__
 #define ASSERT_HOST_DEVICE_LAMBDA(type)                       \
   static_assert(                                              \
@@ -157,6 +162,10 @@ static inline void launch_unrolled_kernel(
     out_calc_t oc,
     loader_t l,
     storer_t s) {
+
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   TORCH_INTERNAL_ASSERT(N > 0 && N <= std::numeric_limits<int32_t>::max());
   int64_t grid = (N + block_work_size() - 1) / block_work_size();
   auto stream = at::cuda::getCurrentCUDAStream();
@@ -182,6 +191,10 @@ __global__ void elementwise_kernel(int N, func_t f) {
 
 template <int nt, int vt, typename func_t>
 static void launch_legacy_kernel(int64_t N, const func_t& f) {
+
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+    
   TORCH_INTERNAL_ASSERT(N >= 0 && N <= std::numeric_limits<int32_t>::max());
   if (N == 0) {
     return;
@@ -281,6 +294,26 @@ void gpu_kernel_impl_nocast(TensorIteratorBase& iter, const func_t& f) {
 
 template <typename func_t>
 void gpu_kernel_impl(TensorIteratorBase& iter, const func_t& f) {
+
+  // 타입 이름 가져오기
+  const char* typeName = typeid(f).name();
+
+  // demangle: 읽기 쉬운 형식으로 변환
+  int status;
+  char* demangledName = abi::__cxa_demangle(typeName, 0, 0, &status);
+
+  std::string functionInfo;
+  if (status == 0) {
+      functionInfo = std::string("Function type: ") + demangledName;
+  } else {
+      functionInfo = std::string("Function type (mangled): ") + typeName;
+  }
+  // 메모리 해제
+  free(demangledName);
+
+  // TaeJun-Ryu
+  CustomLOG("function called : " + functionInfo);
+
   if (!needs_dynamic_casting<func_t>::check(iter)) {
     return gpu_kernel_impl_nocast(iter, f);
   }

@@ -27,6 +27,8 @@ from torch.overrides import (
 )
 from torch.utils.dlpack import DLDeviceType
 
+from lib.logger import get_logger
+clog = get_logger()
 
 def _handle_torch_function_and_wrap_type_error_to_not_implemented(f):
     assigned = functools.WRAPPER_ASSIGNMENTS

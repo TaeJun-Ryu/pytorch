@@ -9,6 +9,9 @@
 #include <atomic>
 #include <cstdint>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace c10::cuda {
 
 namespace {
@@ -351,6 +354,9 @@ CUDAStream getDefaultCUDAStream(DeviceIndex device_index) {
 }
 
 CUDAStream getCurrentCUDAStream(DeviceIndex device_index) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   initCUDAStreamsOnce();
   if (device_index == -1) {
     device_index = current_device();

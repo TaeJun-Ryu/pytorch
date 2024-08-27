@@ -18,6 +18,9 @@
 #include <unordered_set>
 #include <utility>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace c10 {
 
 // Caching allocator will execute every registered callback if it unable to find
@@ -449,6 +452,8 @@ inline void attachAllocatorTraceTracker(AllocatorTraceTracker tracker) {
 }
 
 inline void releasePool(c10::DeviceIndex device, MempoolId_t mempool_id) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   return get()->releasePool(device, mempool_id);
 }
 // Not part of CUDA_ALLOCATOR_BACKEND_INTERFACE

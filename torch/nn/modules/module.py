@@ -15,6 +15,10 @@ from typing_extensions import Self
 from ...utils.hooks import RemovableHandle
 from torch.utils._python_dispatch import is_traceable_wrapper_subclass
 
+from lib.logger import get_logger
+clog = get_logger()
+DATA_COPY_EXEC_SUM = 0
+
 __all__ = ['register_module_forward_pre_hook', 'register_module_forward_hook',
            'register_module_full_backward_pre_hook', 'register_module_backward_hook',
            'register_module_full_backward_hook', 'register_module_buffer_registration_hook',
@@ -800,13 +804,26 @@ class Module:
             # Tensors stored in modules are graph leaves, and we don't want to
             # track autograd history of `param_applied`, so we have to use
             # `with torch.no_grad():`
+            # torch.cuda.Event(enable_timing=True).record() # TaeJun-Ryu # device_map=N # Para gpu 로딩
+
+            # event_start_time = torch.cuda.Event(enable_timing=True)
+            # event_start_time.record()
+            # torch.cuda.synchronize()
+
             with torch.no_grad():
                 param_applied = fn(param)
+
+            # event_end_time = torch.cuda.Event(enable_timing=True)
+            # event_end_time.record()
+            # torch.cuda.synchronize()
+            # clog.info(f"data copy | {key} | {event_start_time.elapsed_time(event_end_time)}")
+
+            # torch.cuda.Event(enable_timing=True).record() # TaeJun-Ryu # device_map=N # Para gpu 로딩
             p_should_use_set_data = compute_should_use_set_data(param, param_applied)
 
             # subclasses may have multiple child tensors so we need to use swap_tensors
             p_should_use_swap_tensors = should_use_swap_tensors or is_traceable_wrapper_subclass(param_applied)
-
+            
             param_grad = param.grad
             if p_should_use_swap_tensors:
                 try:
@@ -822,7 +839,9 @@ class Module:
                     raise RuntimeError(f"_apply(): Couldn't swap {self._get_name()}.{key}") from e
                 out_param = param
             elif p_should_use_set_data:
+                # torch.cuda.synchronize() # TaeJun-Ryu # device_map=N # 마지막 bias 지연 구간
                 param.data = param_applied
+                # torch.cuda.synchronize() # TaeJun-Ryu # device_map=N # 마지막 bias 지연 구간
                 out_param = param
             else:
                 assert isinstance(param, Parameter)
@@ -847,7 +866,6 @@ class Module:
                 else:
                     assert param_grad.is_leaf
                     out_param.grad = grad_applied.requires_grad_(param_grad.requires_grad)
-
         for key, buf in self._buffers.items():
             if buf is not None:
                 self._buffers[key] = fn(buf)

@@ -10,6 +10,9 @@
 #include <mutex>
 #include <string>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace c10::cuda::CUDACachingAllocator {
 
 // Environment config parser
@@ -39,6 +42,8 @@ class C10_CUDA_API CUDAAllocatorConfig {
 
   /** Pinned memory allocator settings */
   static bool pinned_use_cuda_host_register() {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     return instance().m_pinned_use_cuda_host_register;
   }
 

@@ -34,6 +34,9 @@
 #include <utility>
 #include <vector>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 TORCH_SDT_DEFINE_SEMAPHORE(malloc)
 TORCH_SDT_DEFINE_SEMAPHORE(free)
 
@@ -250,6 +253,8 @@ struct Block {
         requested_size(0) {}
 
   size_t gc_count() {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     TORCH_INTERNAL_ASSERT(pool);
     return static_cast<int>(pool->get_free_blocks_call_count - gc_count_base);
   }
@@ -1260,6 +1265,9 @@ class DeviceCachingAllocator {
   }
 
   void free(Block* block) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     std::shared_ptr<GatheredContext> context =
         maybeGatherContext(RecordContext::ALL);
     std::lock_guard<std::recursive_mutex> lock(mutex);
@@ -1829,6 +1837,9 @@ class DeviceCachingAllocator {
 
   // Called by CUDAGraph::reset
   void releasePool(MempoolId_t mempool_id) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     std::lock_guard<std::recursive_mutex> lock(mutex);
     // The instantiated cudaGraphExec_t has been destroyed. We can't blindly
     // delete and cudaFree the mempool its capture used, because
@@ -2067,6 +2078,9 @@ class DeviceCachingAllocator {
         !block->allocated && block->event_count == 0 &&
         block->stream_uses.empty());
 
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     record_trace(
         TraceEntry::FREE_COMPLETED,
         int64_t(block->ptr),
@@ -2229,6 +2243,9 @@ class DeviceCachingAllocator {
   }
 
   bool get_free_block(AllocParams& p) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     BlockPool& pool = *p.pool;
 
     if (C10_UNLIKELY(
@@ -2288,6 +2305,9 @@ class DeviceCachingAllocator {
   }
 
   bool trigger_free_memory_callbacks(AllocParams& p) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     bool freed_memory = false;
     for (const auto& name : FreeCudaMemoryCallbacksRegistry()->Keys()) {
       freed_memory |=
@@ -2671,6 +2691,9 @@ class DeviceCachingAllocator {
 
   void synchronize_and_free_events(
       const std::shared_ptr<GatheredContext>& context) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     // Synchronize on outstanding events and then free associated blocks.
     stats.num_sync_all_streams++;
 
@@ -2919,6 +2942,9 @@ class NativeCachingAllocator : public CUDAAllocator {
   }
 
   void free(void* ptr) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     if (!ptr) {
       return;
     }

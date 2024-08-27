@@ -41,6 +41,9 @@
 #include <functional>
 #include <memory>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace c10::cuda::_internal {
 void setHasPrimaryContext(bool (*func)(DeviceIndex));
 }
@@ -244,10 +247,14 @@ bool CUDAHooks::hasPrimaryContext(DeviceIndex device_index) const {
 }
 
 Allocator* CUDAHooks::getPinnedMemoryAllocator() const {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   return at::cuda::getPinnedMemoryAllocator();
 }
 
 Allocator* CUDAHooks::getCUDADeviceAllocator() const {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   return at::cuda::getCUDADeviceAllocator();
 }
 

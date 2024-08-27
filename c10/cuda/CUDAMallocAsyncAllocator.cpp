@@ -9,6 +9,9 @@
 #include <unordered_set>
 #include <vector>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace c10::cuda::CUDACachingAllocator::CudaMallocAsync {
 
 #if CUDA_VERSION >= 11040
@@ -179,6 +182,10 @@ inline void lazy_init_device(c10::DeviceIndex device) {
 }
 
 inline void sync_raw(cudaStream_t dependency, cudaStream_t dependent) {
+
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   // CUDACachingAllocator.cpp uses raw cuda events, as do we.
   cudaEvent_t event = nullptr;
   C10_CUDA_CHECK(cudaEventCreateWithFlags(&event, cudaEventDisableTiming));
@@ -270,6 +277,10 @@ inline void free_impl(PtrInfo::iterator& it) {
 }
 
 void freeAsync(void* ptr) {
+
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   std::lock_guard<std::mutex> lk(general_mutex);
 
   auto err = cudaGetLastError();
@@ -318,6 +329,10 @@ void mallocAsync(
     c10::DeviceIndex device,
     size_t size,
     cudaStream_t stream) {
+
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   TORCH_INTERNAL_ASSERT(
       0 <= device && device < device_count,
       "Invalid device index ",
@@ -406,6 +421,9 @@ void local_raw_delete(void* ptr);
 // Same pattern as CUDACachingAllocator.cpp.
 struct CudaMallocAsyncAllocator : public CUDAAllocator {
   DataPtr allocate(size_t size) override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     constexpr size_t one_exa_bytes = 1152921504606846976ULL;
     TORCH_CHECK_WITH(
         OutOfMemoryError,
@@ -420,6 +438,9 @@ struct CudaMallocAsyncAllocator : public CUDAAllocator {
     return {r, r, &local_raw_delete, Device(DeviceType::CUDA, device)};
   }
   DeleterFnPtr raw_deleter() const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     return &local_raw_delete;
   }
 
@@ -483,6 +504,9 @@ struct CudaMallocAsyncAllocator : public CUDAAllocator {
   }
 
   void emptyCache() override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     std::lock_guard<std::mutex> lk(general_mutex);
 
     for (int dev = 0; dev < device_count; dev++) {
@@ -586,6 +610,9 @@ struct CudaMallocAsyncAllocator : public CUDAAllocator {
   }
 
   void recordStream(const DataPtr& ptr, cuda::CUDAStream stream) override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     std::lock_guard<std::mutex> lk(general_mutex);
     auto ptr_val = ptr.get();
     // Empty tensor's storage().data() might be a null ptr. As there is no
@@ -870,6 +897,10 @@ struct CudaMallocAsyncAllocator : public CUDAAllocator {
       size_t count,
       cudaStream_t stream,
       bool p2p_enabled) override {
+
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     if (p2p_enabled || dstDevice == srcDevice) {
       return cudaMemcpyAsync(dst, src, count, cudaMemcpyDeviceToDevice, stream);
     } else {
@@ -880,6 +911,9 @@ struct CudaMallocAsyncAllocator : public CUDAAllocator {
     return "cudaMallocAsync";
   }
   void copy_data(void* dest, const void* src, std::size_t count) const final {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     C10_CUDA_CHECK(
         cudaMemcpy(dest, src, count, cudaMemcpyKind::cudaMemcpyDeviceToDevice));
   }
@@ -888,6 +922,9 @@ struct CudaMallocAsyncAllocator : public CUDAAllocator {
 CudaMallocAsyncAllocator device_allocator;
 
 void local_raw_delete(void* ptr) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+  
   freeAsync(ptr);
 }
 CUDAAllocator* allocator() {

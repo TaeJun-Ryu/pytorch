@@ -21,6 +21,9 @@
 #include <type_traits>
 #include <utility>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace c10 {
 
 DispatchKey computeDispatchKey(
@@ -380,6 +383,8 @@ struct C10_API TensorOptions {
   /// Returns the `pinned_memory` property of the `TensorOptions`, or
   /// `c10::nullopt` if `pinned_memory` is not specified.
   c10::optional<bool> pinned_memory_opt() const noexcept {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     return has_pinned_memory_ ? c10::make_optional(pinned_memory_)
                               : c10::nullopt;
   }
@@ -467,6 +472,8 @@ struct C10_API TensorOptions {
 
   /// Mutably set the device of `TensorOptions`.
   void set_device(c10::optional<Device> device) & noexcept {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     if (device) {
       device_ = *device;
       has_device_ = true;
@@ -477,6 +484,8 @@ struct C10_API TensorOptions {
 
   /// Mutably set the dtype of `TensorOptions`.
   void set_dtype(c10::optional<caffe2::TypeMeta> dtype) & noexcept {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     if (dtype) {
       dtype_ = *dtype;
       has_dtype_ = true;
@@ -487,6 +496,8 @@ struct C10_API TensorOptions {
 
   // legacy function to support ScalarType
   void set_dtype(c10::optional<ScalarType> dtype) & noexcept {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     if (dtype) {
       dtype_ = scalarTypeToTypeMeta(*dtype);
       has_dtype_ = true;
@@ -497,6 +508,8 @@ struct C10_API TensorOptions {
 
   /// Mutably set the layout of `TensorOptions`.
   void set_layout(c10::optional<Layout> layout) & noexcept {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     if (layout) {
       layout_ = *layout;
       has_layout_ = true;
@@ -517,6 +530,8 @@ struct C10_API TensorOptions {
 
   /// Mutably set the `pinned_memory` property of `TensorOptions`.
   void set_pinned_memory(c10::optional<bool> pinned_memory) & noexcept {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     if (pinned_memory) {
       pinned_memory_ = *pinned_memory;
       has_pinned_memory_ = true;

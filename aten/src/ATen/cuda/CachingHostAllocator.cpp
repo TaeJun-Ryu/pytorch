@@ -18,6 +18,9 @@
 #include <unordered_set>
 #include <utility>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace at::cuda {
 namespace {
 
@@ -75,6 +78,8 @@ class EventPool {
   }
 
   void empty_cache() {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     for (auto& pool : pools_) {
       std::lock_guard<std::mutex> g(pool.mutex_);
       pool.event_pool_.clear();
@@ -146,6 +151,9 @@ struct BlockComparator {
 class CUDAHostAllocator {
  public:
   std::pair<void*, void*> allocate(size_t size) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     if (size == 0) {
       return {nullptr, nullptr};
     }
@@ -201,6 +209,10 @@ class CUDAHostAllocator {
   }
 
   void free(void* ctx) {
+
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     if (!ctx) {
       return;
     }
@@ -240,6 +252,10 @@ class CUDAHostAllocator {
   }
 
   bool record_event(void* ptr, void* ctx, at::cuda::CUDAStream stream) {
+
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     auto* block = reinterpret_cast<Block*>(ctx);
 
     // Note: we need to check if the passed-in `ctx` is valid. This is because
@@ -270,6 +286,10 @@ class CUDAHostAllocator {
   }
 
   void empty_cache() {
+
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     // Flush any available blocks into the free_list.
     process_events();
 
@@ -307,6 +327,10 @@ class CUDAHostAllocator {
 
  private:
   void process_events() {
+
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     while (true) {
       // Avoid calling cudaEventDestroy while holding a mutex, so move
       // intermediate events out of the lock into this object.
@@ -407,6 +431,9 @@ class CUDAHostAllocator {
   }
 
   inline void allocWithCudaHostRegister(void** ptr, size_t roundSize) {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
+
     // Here we do regular allocation, pre-fault/map the pages, and then do
     // cudaHostRegister with GPU mapping flags to lock the pages, so we
     // can minimize the cost for the cuda global lock.
@@ -470,12 +497,16 @@ class CUDAHostAllocator {
 } // namespace
 
 static CUDAHostAllocator& getCUDAHostAllocator() {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   // leak and don't worry about shutdown
   static auto* r = new CUDAHostAllocator();
   return *r;
 }
 
 static void CUDAHostAllocatorDeleter(void* ctx) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   getCUDAHostAllocator().free(ctx);
 }
 
@@ -483,16 +514,22 @@ bool CachingHostAllocator_recordEvent(
     void* ptr,
     void* ctx,
     at::cuda::CUDAStream stream) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   return getCUDAHostAllocator().record_event(ptr, ctx, stream);
 }
 
 // Releases cached pinned memory allocations via cudaHostFree
 void CachingHostAllocator_emptyCache() {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   getCUDAHostAllocator().empty_cache();
 }
 
 struct CUDAHostAllocatorWrapper final : public at::Allocator {
   at::DataPtr allocate(size_t size) override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     auto ptr_and_ctx = getCUDAHostAllocator().allocate(size);
     return {
         ptr_and_ctx.first,
@@ -502,6 +539,8 @@ struct CUDAHostAllocatorWrapper final : public at::Allocator {
   }
 
   void copy_data(void* dest, const void* src, std::size_t count) const final {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     getCUDAHostAllocator().copy_data(dest, src, count);
   }
 };
@@ -509,6 +548,8 @@ struct CUDAHostAllocatorWrapper final : public at::Allocator {
 static CUDAHostAllocatorWrapper cuda_host_allocator;
 
 at::Allocator* getCachingHostAllocator() {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
   return &cuda_host_allocator;
 }
 

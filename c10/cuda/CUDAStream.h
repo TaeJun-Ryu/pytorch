@@ -10,6 +10,10 @@
 #include <c10/cuda/CUDAFunctions.h>
 #include <c10/util/Exception.h>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
+
 /*
  * Stream pool note.
  *
@@ -132,6 +136,8 @@ class C10_CUDA_API CUDAStream {
   }
 
   void synchronize() const {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     DeviceGuard guard{stream_.device()};
     c10::cuda::stream_synchronize(stream());
   }

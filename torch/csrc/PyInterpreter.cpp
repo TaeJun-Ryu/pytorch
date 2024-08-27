@@ -8,6 +8,9 @@
 
 #include <string>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 using namespace torch;
 using namespace at;
 using namespace c10;
@@ -84,34 +87,53 @@ struct ConcretePyInterpreterVTable final
   c10::SymInt sym_storage_offset(const c10::TensorImpl* self) const override;
 
   void trace_gpu_event_creation(uintptr_t event) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAEventCreationCallbacks", event);
   }
   void trace_gpu_event_deletion(uintptr_t event) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAEventDeletionCallbacks", event);
   }
-  void trace_gpu_event_record(uintptr_t event, uintptr_t stream)
-      const override {
+  void trace_gpu_event_record(uintptr_t event, uintptr_t stream) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAEventRecordCallbacks", event, stream);
   }
   void trace_gpu_event_wait(uintptr_t event, uintptr_t stream) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAEventWaitCallbacks", event, stream);
   }
   void trace_gpu_memory_allocation(uintptr_t ptr) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAMemoryAllocationCallbacks", ptr);
   }
   void trace_gpu_memory_deallocation(uintptr_t ptr) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAMemoryDeallocationCallbacks", ptr);
   }
   void trace_gpu_stream_creation(uintptr_t stream) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAStreamCreationCallbacks", stream);
   }
   void trace_gpu_device_synchronization() const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDADeviceSynchronizationCallbacks");
   }
   void trace_gpu_stream_synchronization(uintptr_t stream) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAStreamSynchronizationCallbacks", stream);
   }
   void trace_gpu_event_synchronization(uintptr_t event) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CONCRETE_TRACE_CUDA("CUDAEventSynchronizationCallbacks", event);
   }
 

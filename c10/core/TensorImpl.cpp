@@ -14,6 +14,9 @@
 
 #include <utility>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 C10_DEFINE_bool(
     caffe2_keep_on_shrink,
     true,
@@ -281,6 +284,9 @@ bool TensorImpl::compute_non_overlapping_and_dense(identity<bool>) const {
 }
 
 void TensorImpl::release_resources() {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   autograd_meta_.reset();
   if (storage_) {
     storage_ = {};

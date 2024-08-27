@@ -13,6 +13,9 @@
 #include <cstdint>
 #include <utility>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace at::cuda {
 
 /*
@@ -158,6 +161,8 @@ struct TORCH_CUDA_CPP_API CUDAEvent {
 
   // Note: cudaEventSynchronize can be safely called from any device
   void synchronize() const {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     if (is_created_) {
       const c10::impl::PyInterpreter* interp = c10::impl::GPUTrace::get_trace();
       if (C10_UNLIKELY(interp)) {

@@ -18,6 +18,10 @@
 #include <cuda_runtime_api.h>
 #include <cstdint>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
+
 namespace c10::cuda::impl {
 
 struct CUDAGuardImpl final : public c10::impl::DeviceGuardImplInterface {
@@ -198,6 +202,8 @@ struct CUDAGuardImpl final : public c10::impl::DeviceGuardImplInterface {
   }
 
   void synchronizeStream(const Stream& stream) const override {
+    // TaeJun-Ryu
+    // CustomLOG("function called.");
     CUDAStream cuda_stream{stream};
     cuda_stream.synchronize();
   }

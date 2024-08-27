@@ -11,6 +11,8 @@
 
 #include <ATen/native/cuda/MemoryAccess.cuh>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
 
 namespace at { namespace native {
 
@@ -97,6 +99,9 @@ void gpu_kernel_nocast(TensorIteratorBase& iter, const func_t& f) {
 
 template <typename func_t>
 void gpu_kernel(TensorIteratorBase& iter, const func_t& f) {
+
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
 
   for (int arg = 0; arg < iter.ntensors(); arg++) {
     TORCH_INTERNAL_ASSERT(

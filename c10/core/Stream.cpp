@@ -1,6 +1,9 @@
 #include <c10/core/Stream.h>
 #include <c10/core/impl/VirtualGuardImpl.h>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace c10 {
 
 // Return whether all asynchronous work previously enqueued on this stream
@@ -13,6 +16,9 @@ bool Stream::query() const {
 // Wait (by blocking the calling thread) until all asynchronous work enqueued
 // on this stream has completed running on the device.
 void Stream::synchronize() const {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   impl::VirtualGuardImpl impl{device_.type()};
   impl.synchronizeStream(*this);
 }

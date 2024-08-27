@@ -12,6 +12,14 @@
 #include <c10/cuda/CUDAException.h>
 #include <c10/cuda/CUDAMacros.h>
 #include <cuda_runtime_api.h>
+
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+#include <iostream>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
+
 namespace c10::cuda {
 
 // NB: In the past, we were inconsistent about whether or not this reported
@@ -80,6 +88,9 @@ C10_CUDA_API void __inline__ memcpy_and_sync(
     int64_t nbytes,
     cudaMemcpyKind kind,
     cudaStream_t stream) {
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   if (C10_UNLIKELY(
           warning_state().get_sync_debug_mode() != SyncDebugMode::L_DISABLED)) {
     warn_or_error_on_sync();
@@ -92,8 +103,17 @@ C10_CUDA_API void __inline__ memcpy_and_sync(
 #if defined(TORCH_HIP_VERSION) && (TORCH_HIP_VERSION >= 301)
   C10_CUDA_CHECK(hipMemcpyWithStream(dst, src, nbytes, kind, stream));
 #else
+  // auto st_cudaMemcpyAsync = std::chrono::high_resolution_clock::now(); // TaeJun-Ryu
   C10_CUDA_CHECK(cudaMemcpyAsync(dst, src, nbytes, kind, stream));
+  // auto et_cudaMemcpyAsync = std::chrono::high_resolution_clock::now(); // TaeJun-Ryu
+  // auto du_cudaMemcpyAsync = std::chrono::duration_cast<std::chrono::nanoseconds>(et_cudaMemcpyAsync - st_cudaMemcpyAsync).count(); // TaeJun-Ryu
+  // CustomLOG("cudaMemcpyAsync | " + std::to_string(du_cudaMemcpyAsync)); // TaeJun-Ryu
+
+  // auto st_cudaStreamSynchronize = std::chrono::high_resolution_clock::now(); // TaeJun-Ryu
   C10_CUDA_CHECK(cudaStreamSynchronize(stream));
+  // auto et_cudaStreamSynchronize = std::chrono::high_resolution_clock::now(); // TaeJun-Ryu
+  // auto du_cudaStreamSynchronize = std::chrono::duration_cast<std::chrono::nanoseconds>(et_cudaStreamSynchronize - st_cudaStreamSynchronize).count(); // TaeJun-Ryu
+  // CustomLOG("cudaStreamSynchronize | " + std::to_string(du_cudaStreamSynchronize)); // TaeJun-Ryu
 #endif
 }
 
@@ -107,7 +127,10 @@ C10_CUDA_API void __inline__ stream_synchronize(cudaStream_t stream) {
     (*interp)->trace_gpu_stream_synchronization(
         reinterpret_cast<uintptr_t>(stream));
   }
+
+//   CustomLOG("cudaStreamSynchronize | function start"); // TaeJun-Ryu
   C10_CUDA_CHECK(cudaStreamSynchronize(stream));
+//   CustomLOG("cudaStreamSynchronize | function end"); // TaeJun-Ryu
 }
 
 C10_CUDA_API bool hasPrimaryContext(DeviceIndex device_index);

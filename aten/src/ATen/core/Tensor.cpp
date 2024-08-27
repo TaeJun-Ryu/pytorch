@@ -15,6 +15,9 @@
 
 #include <iostream>
 
+// TaeJun-Ryu
+#include <c10/util/custom_logging.h>
+
 namespace at {
 
 const TensorBase& get_tensor_base(const Tensor &t) {
@@ -43,6 +46,10 @@ TensorBase TensorBase::to(
     bool non_blocking,
     bool copy,
     c10::optional<at::MemoryFormat> memory_format) const {
+
+  // TaeJun-Ryu
+  // CustomLOG("function called.");
+
   Tensor self(*this);
   return at::_ops::to_dtype_layout::call(
       self, optTypeMetaToScalarType(options.dtype_opt()),

@@ -2249,6 +2249,11 @@ def embedding(
             padding_idx = weight.size(0) + padding_idx
     else:
         padding_idx = -1
+
+    from lib.logger import get_logger
+    clog = get_logger()
+    clog.info(f"padding_idx : {padding_idx}") # TaeJun-Ryu
+    
     if max_norm is not None:
         # Note [embedding_renorm contiguous]
         # `embedding_renorm_` will call .contiguous() on input anyways, so we
