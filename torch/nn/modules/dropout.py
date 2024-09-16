@@ -3,6 +3,8 @@ from .. import functional as F
 
 from torch import Tensor
 
+from lib.logger import get_logger, deco_logger
+
 __all__ = ['Dropout', 'Dropout1d', 'Dropout2d', 'Dropout3d', 'AlphaDropout', 'FeatureAlphaDropout']
 
 class _DropoutNd(Module):

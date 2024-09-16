@@ -2252,7 +2252,7 @@ def embedding(
 
     from lib.logger import get_logger
     clog = get_logger()
-    clog.info(f"padding_idx : {padding_idx}") # TaeJun-Ryu
+    # clog.info(f"padding_idx : {padding_idx}") # TaeJun-Ryu
     
     if max_norm is not None:
         # Note [embedding_renorm contiguous]

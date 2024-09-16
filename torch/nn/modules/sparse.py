@@ -8,6 +8,8 @@ from .module import Module
 from .. import functional as F
 from .. import init
 
+from lib.logger import get_logger, deco_logger
+
 __all__ = ['Embedding', 'EmbeddingBag']
 
 class Embedding(Module):

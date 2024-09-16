@@ -15,8 +15,9 @@ from typing_extensions import Self
 from ...utils.hooks import RemovableHandle
 from torch.utils._python_dispatch import is_traceable_wrapper_subclass
 
-from lib.logger import get_logger
+from lib.logger import get_logger, deco_logger
 clog = get_logger()
+
 DATA_COPY_EXEC_SUM = 0
 
 __all__ = ['register_module_forward_pre_hook', 'register_module_forward_hook',

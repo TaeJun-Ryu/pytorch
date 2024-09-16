@@ -9,6 +9,8 @@ from .. import init
 from torch import Tensor, Size
 from typing import Union, List, Tuple
 
+from lib.logger import get_logger, deco_logger
+
 __all__ = ['LocalResponseNorm', 'CrossMapLRN2d', 'LayerNorm', 'GroupNorm']
 
 class LocalResponseNorm(Module):
